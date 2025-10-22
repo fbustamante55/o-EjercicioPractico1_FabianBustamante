@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title th:text="${libro.id != null ? 'Editar Libro' : 'Nuevo Libro'} + ' - Biblioteca Digital'">Nuevo Libro - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-book me-2 text-primary"></i>
+                    <span th:text="${libro.id != null ? 'Editar Libro' : 'Nuevo Libro'}">Nuevo Libro</span>
+                </h2>
+                <p class="text-muted">
+                    <span th:if="${libro.id != null}">Modifica la información del libro</span>
+                    <span th:unless="${libro.id != null}">Agrega un nuevo libro a la biblioteca</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/libros" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            Información del Libro
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="${libro.id != null ? '/libros/actualizar/' + libro.id : '/libros/guardar'}" 
+                              th:object="${libro}" 
+                              method="post" 
+                              class="needs-validation" 
+                              novalidate>
+                            
+                            <!-- Title -->
+                            <div class="mb-3">
+                                <label for="titulo" class="form-label">
+                                    <i class="fas fa-heading me-1"></i>Título <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="titulo" 
+                                       th:field="*{titulo}" 
+                                       placeholder="Ingrese el título del libro"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese el título del libro.
+                                </div>
+                                <div th:if="${#fields.hasErrors('titulo')}" class="text-danger small">
+                                    <span th:errors="*{titulo}">Error en el título</span>
+                                </div>
+                            </div>
+
+                            <!-- Author -->
+                            <div class="mb-3">
+                                <label for="autor" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Autor <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="autor" 
+                                       th:field="*{autor}" 
+                                       placeholder="Ingrese el nombre del autor"
+                                       required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese el nombre del autor.
+                                </div>
+                                <div th:if="${#fields.hasErrors('autor')}" class="text-danger small">
+                                    <span th:errors="*{autor}">Error en el autor</span>
+                                </div>
+                            </div>
+
+                            <!-- ISBN -->
+                            <div class="mb-3">
+                                <label for="isbn" class="form-label">
+                                    <i class="fas fa-barcode me-1"></i>ISBN
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="isbn" 
+                                       th:field="*{isbn}" 
+                                       placeholder="Ingrese el ISBN (opcional)">
+                                <div class="form-text">El ISBN es opcional pero recomendado para identificación única.</div>
+                                <div th:if="${#fields.hasErrors('isbn')}" class="text-danger small">
+                                    <span th:errors="*{isbn}">Error en el ISBN</span>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="mb-3">
+                                <label for="categoria" class="form-label">
+                                    <i class="fas fa-tags me-1"></i>Categoría <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" 
+                                        id="categoria" 
+                                        th:field="*{categoria.id}" 
+                                        required>
+                                    <option value="">Seleccione una categoría</option>
+                                    <option th:each="categoria : ${categorias}" 
+                                            th:value="${categoria.id}" 
+                                            th:text="${categoria.nombre}">Categoría</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor seleccione una categoría.
+                                </div>
+                                <div class="form-text">
+                                    <a href="/categorias/nueva" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-plus me-1"></i>Crear nueva categoría
+                                    </a>
+                                </div>
+                                <div th:if="${#fields.hasErrors('categoria')}" class="text-danger small">
+                                    <span th:errors="*{categoria}">Error en la categoría</span>
+                                </div>
+                            </div>
+
+                            <!-- Publication Date -->
+                            <div class="mb-3">
+                                <label for="fechaPublicacion" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i>Fecha de Publicación
+                                </label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="fechaPublicacion" 
+                                       th:field="*{fechaPublicacion}">
+                                <div class="form-text">Fecha de publicación del libro (opcional).</div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="mb-3">
+                                <label for="precio" class="form-label">
+                                    <i class="fas fa-dollar-sign me-1"></i>Precio
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="precio" 
+                                           th:field="*{precio}" 
+                                           step="0.01" 
+                                           min="0" 
+                                           placeholder="0.00">
+                                </div>
+                                <div class="form-text">Precio del libro en dólares (opcional).</div>
+                            </div>
+
+                            <!-- Availability -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-check-circle me-1"></i>Disponibilidad
+                                </label>
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="disponible" 
+                                           th:field="*{disponible}">
+                                    <label class="form-check-label" for="disponible">
+                                        Libro disponible para préstamo
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="descripcion" class="form-label">
+                                    <i class="fas fa-align-left me-1"></i>Descripción
+                                </label>
+                                <textarea class="form-control" 
+                                          id="descripcion" 
+                                          th:field="*{descripcion}" 
+                                          rows="4" 
+                                          placeholder="Ingrese una descripción del libro (opcional)"></textarea>
+                                <div class="form-text">Descripción detallada del libro, sinopsis o información adicional.</div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/libros" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    <span th:text="${libro.id != null ? 'Actualizar Libro' : 'Guardar Libro'}">Guardar Libro</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-info-circle me-2"></i>Información Útil
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-check text-success me-2"></i>Los campos marcados con * son obligatorios</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>El ISBN debe ser único si se proporciona</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>La categoría debe existir previamente</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Use una descripción clara y concisa</li>
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>El precio es opcional pero recomendado</li>
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Puede cambiar la disponibilidad después</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

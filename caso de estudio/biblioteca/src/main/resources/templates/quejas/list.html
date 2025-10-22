@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Gestión de Quejas y Sugerencias - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-comment-dots me-2 text-primary"></i>
+                    Gestión de Quejas y Sugerencias
+                </h2>
+                <p class="text-muted">Administra los mensajes recibidos de los usuarios</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/quejas/nueva" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Queja/Sugerencia
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center shadow-soft">
+                    <div class="card-body">
+                        <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                        <h4 class="text-warning" th:text="${noTratadas}">0</h4>
+                        <p class="text-muted mb-0">Pendientes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-soft">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <h4 class="text-success" th:text="${#lists.size(quejas) - noTratadas}">0</h4>
+                        <p class="text-muted mb-0">Tratadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-soft">
+                    <div class="card-body">
+                        <i class="fas fa-lightbulb fa-2x text-info mb-2"></i>
+                        <h4 class="text-info" th:text="${#lists.size(quejas.?[tipo.name() == 'SUGERENCIA'])}">0</h4>
+                        <p class="text-muted mb-0">Sugerencias</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-soft">
+                    <div class="card-body">
+                        <i class="fas fa-question-circle fa-2x text-primary mb-2"></i>
+                        <h4 class="text-primary" th:text="${#lists.size(quejas)}">0</h4>
+                        <p class="text-muted mb-0">Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="search-form">
+            <form method="get" action="/quejas/filtrar" class="row g-3">
+                <div class="col-md-3">
+                    <label for="tipo" class="form-label">Filtrar por Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo">
+                        <option value="">Todos los tipos</option>
+                        <option value="QUEJA" th:selected="${filtroTipo == T(com.biblioteca.biblioteca.domain.Queja.TipoQueja).QUEJA}">Queja</option>
+                        <option value="SUGERENCIA" th:selected="${filtroTipo == T(com.biblioteca.biblioteca.domain.Queja.TipoQueja).SUGERENCIA}">Sugerencia</option>
+                        <option value="CONSULTA" th:selected="${filtroTipo == T(com.biblioteca.biblioteca.domain.Queja.TipoQueja).CONSULTA}">Consulta</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="tratado" class="form-label">Filtrar por Estado</label>
+                    <select class="form-select" id="tratado" name="tratado">
+                        <option value="">Todos los estados</option>
+                        <option value="false" th:selected="${filtroTratado == false}">No Tratadas</option>
+                        <option value="true" th:selected="${filtroTratado == true}">Tratadas</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-1"></i>Filtrar
+                        </button>
+                        <a href="/quejas" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Limpiar
+                        </a>
+                        <a href="/quejas/no-tratadas" class="btn btn-outline-warning" th:if="${!soloNoTratadas}">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Solo Pendientes
+                        </a>
+                        <a href="/quejas" class="btn btn-outline-secondary" th:if="${soloNoTratadas}">
+                            <i class="fas fa-list me-1"></i>Todas las Quejas
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Complaints Table -->
+        <div class="card shadow-soft">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    <span th:if="${soloNoTratadas}">Quejas Pendientes</span>
+                    <span th:unless="${soloNoTratadas}">Todas las Quejas y Sugerencias</span>
+                    <span class="badge bg-primary ms-2" th:text="${#lists.size(quejas)}">0</span>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Asunto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="queja : ${quejas}">
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${queja.tipo.name() == 'QUEJA'} ? 'bg-danger' : 
+                                                         (queja.tipo.name() == 'SUGERENCIA') ? 'bg-warning' : 'bg-info'"
+                                          th:text="${queja.tipo.name()}">TIPO</span>
+                                </td>
+                                <td th:text="${queja.nombreCliente != null ? queja.nombreCliente : 'Anónimo'}">Cliente</td>
+                                <td th:text="${queja.email != null ? queja.email : '-'}">Email</td>
+                                <td>
+                                    <span th:text="${queja.asunto != null ? queja.asunto : 'Sin asunto'}">Asunto</span>
+                                </td>
+                                <td>
+                                    <small th:text="${#dates.format(queja.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</small>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${queja.tratado} ? 'bg-success' : 'bg-warning'"
+                                          th:text="${queja.tratado} ? 'Tratada' : 'Pendiente'">
+                                        Estado
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" 
+                                                class="btn btn-outline-info btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#modal-' + ${queja.id}"
+                                                data-bs-toggle="tooltip" 
+                                                title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        
+                                        <form th:action="${queja.tratado ? '/quejas/marcar-no-tratada/' + queja.id : '/quejas/marcar-tratada/' + queja.id}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" 
+                                                    class="btn btn-outline-secondary btn-sm btn-mark-handled"
+                                                    data-bs-toggle="tooltip" 
+                                                    th:title="${queja.tratado} ? 'Marcar como Pendiente' : 'Marcar como Tratada'">
+                                                <i th:class="${queja.tratado} ? 'fas fa-undo' : 'fas fa-check'"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form th:action="@{'/quejas/eliminar/' + ${queja.id}}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" 
+                                                    class="btn btn-outline-danger btn-sm btn-delete" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(quejas)}">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-comment-dots fa-3x mb-3 d-block"></i>
+                                    <h5>No hay quejas o sugerencias</h5>
+                                    <p>No se encontraron mensajes que coincidan con los criterios de búsqueda.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals for Details -->
+        <div th:each="queja : ${quejas}">
+            <div class="modal fade" th:id="'modal-' + ${queja.id}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-comment-dots me-2"></i>
+                                Detalles del Mensaje
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Tipo</h6>
+                                    <span class="badge fs-6" 
+                                          th:classappend="${queja.tipo.name() == 'QUEJA'} ? 'bg-danger' : 
+                                                         (queja.tipo.name() == 'SUGERENCIA') ? 'bg-warning' : 'bg-info'"
+                                          th:text="${queja.tipo.name()}">TIPO</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Estado</h6>
+                                    <span class="badge fs-6" 
+                                          th:classappend="${queja.tratado} ? 'bg-success' : 'bg-warning'"
+                                          th:text="${queja.tratado} ? 'Tratada' : 'Pendiente'">Estado</span>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3" th:if="${queja.nombreCliente != null}">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Cliente</h6>
+                                    <p th:text="${queja.nombreCliente}">Nombre</p>
+                                </div>
+                                <div class="col-md-6" th:if="${queja.email != null}">
+                                    <h6 class="text-muted">Email</h6>
+                                    <p th:text="${queja.email}">Email</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" th:if="${queja.telefono != null}">
+                                <h6 class="text-muted">Teléfono</h6>
+                                <p th:text="${queja.telefono}">Teléfono</p>
+                            </div>
+                            
+                            <div class="mb-3" th:if="${queja.asunto != null}">
+                                <h6 class="text-muted">Asunto</h6>
+                                <p th:text="${queja.asunto}">Asunto</p>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted">Mensaje</h6>
+                                <div class="border-start border-primary border-3 ps-3">
+                                    <p th:text="${queja.mensaje}">Mensaje</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6 class="text-muted">Fecha de Envío</h6>
+                                <p th:text="${#dates.format(queja.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <form th:action="${queja.tratado ? '/quejas/marcar-no-tratada/' + queja.id : '/quejas/marcar-tratada/' + queja.id}" 
+                                  method="post" 
+                                  class="d-inline">
+                                <button type="submit" 
+                                        class="btn btn-primary btn-mark-handled">
+                                    <i th:class="${queja.tratado} ? 'fas fa-undo me-1' : 'fas fa-check me-1'"></i>
+                                    <span th:text="${queja.tratado} ? 'Marcar como Pendiente' : 'Marcar como Tratada'">Cambiar Estado</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-lightning-bolt me-2"></i>Acciones Rápidas
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="/quejas/nueva" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Nueva Queja/Sugerencia
+                            </a>
+                            <a href="/quejas/no-tratadas" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Ver Pendientes
+                            </a>
+                            <button class="btn btn-outline-info btn-sm" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Imprimir Lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

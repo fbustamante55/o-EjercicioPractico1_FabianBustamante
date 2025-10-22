@@ -1,0 +1,15 @@
+com\biblioteca\biblioteca\service\LibroService.class
+com\biblioteca\biblioteca\BibliotecaApplication.class
+com\biblioteca\biblioteca\domain\Queja.class
+com\biblioteca\biblioteca\domain\Categoria.class
+com\biblioteca\biblioteca\service\QuejaService.class
+com\biblioteca\biblioteca\domain\Queja$TipoQueja.class
+com\biblioteca\biblioteca\controller\CategoriaController.class
+com\biblioteca\biblioteca\service\CategoriaService.class
+com\biblioteca\biblioteca\controller\LibroController.class
+com\biblioteca\biblioteca\controller\QuejaController.class
+com\biblioteca\biblioteca\repository\LibroRepository.class
+com\biblioteca\biblioteca\repository\CategoriaRepository.class
+com\biblioteca\biblioteca\repository\QuejaRepository.class
+com\biblioteca\biblioteca\domain\Libro.class
+com\biblioteca\biblioteca\controller\HomeController.class

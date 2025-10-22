@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Quejas y Sugerencias - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2>
+                    <i class="fas fa-comment-dots me-2 text-primary"></i>
+                    Quejas y Sugerencias
+                </h2>
+                <p class="text-muted">Tu opinión es importante para nosotros. Ayúdanos a mejorar nuestros servicios.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="/quejas" class="btn btn-outline-secondary" th:if="${quejas != null}">
+                    <i class="fas fa-list me-2"></i>Ver Todas las Quejas
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Envíanos tu Mensaje
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/quejas/guardar}" 
+                              th:object="${queja}" 
+                              method="post" 
+                              class="needs-validation" 
+                              novalidate>
+                            
+                            <!-- Type Selection -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-tag me-1"></i>Tipo de Mensaje <span class="text-danger">*</span>
+                                </label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="radio" 
+                                                   name="tipo" 
+                                                   id="sugerencia" 
+                                                   value="SUGERENCIA" 
+                                                   th:field="*{tipo}">
+                                            <label class="form-check-label" for="sugerencia">
+                                                <i class="fas fa-lightbulb text-warning me-1"></i>Sugerencia
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="radio" 
+                                                   name="tipo" 
+                                                   id="queja" 
+                                                   value="QUEJA" 
+                                                   th:field="*{tipo}">
+                                            <label class="form-check-label" for="queja">
+                                                <i class="fas fa-exclamation-triangle text-danger me-1"></i>Queja
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="radio" 
+                                                   name="tipo" 
+                                                   id="consulta" 
+                                                   value="CONSULTA" 
+                                                   th:field="*{tipo}">
+                                            <label class="form-check-label" for="consulta">
+                                                <i class="fas fa-question-circle text-info me-1"></i>Consulta
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${#fields.hasErrors('tipo')}" class="text-danger small">
+                                    <span th:errors="*{tipo}">Error en el tipo</span>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nombreCliente" class="form-label">
+                                        <i class="fas fa-user me-1"></i>Nombre Completo
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="nombreCliente" 
+                                           th:field="*{nombreCliente}" 
+                                           placeholder="Su nombre completo">
+                                    <div th:if="${#fields.hasErrors('nombreCliente')}" class="text-danger small">
+                                        <span th:errors="*{nombreCliente}">Error en el nombre</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope me-1"></i>Correo Electrónico
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           th:field="*{email}" 
+                                           placeholder="su@email.com">
+                                    <div th:if="${#fields.hasErrors('email')}" class="text-danger small">
+                                        <span th:errors="*{email}">Error en el email</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Teléfono
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="telefono" 
+                                       th:field="*{telefono}" 
+                                       placeholder="(555) 123-4567">
+                                <div class="form-text">Opcional, pero útil para seguimiento.</div>
+                                <div th:if="${#fields.hasErrors('telefono')}" class="text-danger small">
+                                    <span th:errors="*{telefono}">Error en el teléfono</span>
+                                </div>
+                            </div>
+
+                            <!-- Subject -->
+                            <div class="mb-3">
+                                <label for="asunto" class="form-label">
+                                    <i class="fas fa-heading me-1"></i>Asunto
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="asunto" 
+                                       th:field="*{asunto}" 
+                                       placeholder="Resumen breve de su mensaje">
+                                <div class="form-text">Opcional, pero ayuda a categorizar su mensaje.</div>
+                                <div th:if="${#fields.hasErrors('asunto')}" class="text-danger small">
+                                    <span th:errors="*{asunto}">Error en el asunto</span>
+                                </div>
+                            </div>
+
+                            <!-- Message -->
+                            <div class="mb-4">
+                                <label for="mensaje" class="form-label">
+                                    <i class="fas fa-comment me-1"></i>Mensaje <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" 
+                                          id="mensaje" 
+                                          th:field="*{mensaje}" 
+                                          rows="6" 
+                                          placeholder="Escriba aquí su mensaje detallado..."
+                                          required></textarea>
+                                <div class="invalid-feedback">
+                                    Por favor escriba su mensaje.
+                                </div>
+                                <div class="form-text">Sea específico y detallado para ayudarnos a entender mejor su situación.</div>
+                                <div th:if="${#fields.hasErrors('mensaje')}" class="text-danger small">
+                                    <span th:errors="*{mensaje}">Error en el mensaje</span>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-flex justify-content-between">
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="aceptoTerminos" 
+                                           required>
+                                    <label class="form-check-label small" for="aceptoTerminos">
+                                        Acepto que mi información sea utilizada para responder a mi consulta.
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Información Importante
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="text-primary">
+                                <i class="fas fa-clock me-1"></i>Tiempo de Respuesta
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Responderemos a su mensaje dentro de 24-48 horas hábiles.
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="text-success">
+                                <i class="fas fa-shield-alt me-1"></i>Privacidad
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Su información personal será tratada de forma confidencial.
+                            </p>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="text-warning">
+                                <i class="fas fa-envelope me-1"></i>Confirmación
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Recibirá una confirmación por email si proporciona su dirección.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="card shadow-soft mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-phone me-2"></i>Contacto Directo
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <i class="fas fa-envelope text-primary me-2"></i>
+                            <small>info@biblioteca.com</small>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-phone text-success me-2"></i>
+                            <small>+1 (555) 123-4567</small>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-clock text-info me-2"></i>
+                            <small>Lun-Vie: 9:00-18:00</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="card bg-light mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-lightbulb me-2"></i>Consejos
+                        </h6>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-1"></i>
+                                Sea específico y claro
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-1"></i>
+                                Incluya detalles relevantes
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-1"></i>
+                                Mantenga un tono respetuoso
+                            </li>
+                            <li>
+                                <i class="fas fa-check text-success me-1"></i>
+                                Proporcione información de contacto
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

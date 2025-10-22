@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title th:text="${categoria.id != null ? 'Editar Categoría' : 'Nueva Categoría'} + ' - Biblioteca Digital'">Nueva Categoría - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-tags me-2 text-primary"></i>
+                    <span th:text="${categoria.id != null ? 'Editar Categoría' : 'Nueva Categoría'}">Nueva Categoría</span>
+                </h2>
+                <p class="text-muted">
+                    <span th:if="${categoria.id != null}">Modifica la información de la categoría</span>
+                    <span th:unless="${categoria.id != null}">Crea una nueva categoría para organizar los libros</span>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/categorias" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>
+                            Información de la Categoría
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="${categoria.id != null ? '/categorias/actualizar/' + categoria.id : '/categorias/guardar'}" 
+                              th:object="${categoria}" 
+                              method="post" 
+                              class="needs-validation" 
+                              novalidate>
+                            
+                            <!-- Name -->
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">
+                                    <i class="fas fa-tag me-1"></i>Nombre de la Categoría <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombre" 
+                                       th:field="*{nombre}" 
+                                       placeholder="Ej: Ficción, Ciencia, Historia..."
+                                       required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese el nombre de la categoría.
+                                </div>
+                                <div th:if="${#fields.hasErrors('nombre')}" class="text-danger small">
+                                    <span th:errors="*{nombre}">Error en el nombre</span>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="descripcion" class="form-label">
+                                    <i class="fas fa-align-left me-1"></i>Descripción
+                                </label>
+                                <textarea class="form-control" 
+                                          id="descripcion" 
+                                          th:field="*{descripcion}" 
+                                          rows="4" 
+                                          placeholder="Descripción opcional de la categoría..."></textarea>
+                                <div class="form-text">Proporcione una descripción que ayude a entender qué tipo de libros pertenecen a esta categoría.</div>
+                                <div th:if="${#fields.hasErrors('descripcion')}" class="text-danger small">
+                                    <span th:errors="*{descripcion}">Error en la descripción</span>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/categorias" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    <span th:text="${categoria.id != null ? 'Actualizar Categoría' : 'Guardar Categoría'}">Guardar Categoría</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-info-circle me-2"></i>Información Útil
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-check text-success me-2"></i>El nombre debe ser único</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Use nombres descriptivos y claros</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>La descripción es opcional pero recomendada</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled small">
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplos: Ficción, No Ficción, Ciencia</li>
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Evite nombres muy largos</li>
+                                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Puede editar después de crear</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples Section -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>Ejemplos de Categorías
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-book fa-2x text-primary mb-2"></i>
+                                        <h6>Ficción</h6>
+                                        <small class="text-muted">Novelas y relatos de ficción</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-flask fa-2x text-success mb-2"></i>
+                                        <h6>Ciencia</h6>
+                                        <small class="text-muted">Libros de divulgación científica</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-history fa-2x text-info mb-2"></i>
+                                        <h6>Historia</h6>
+                                        <small class="text-muted">Libros sobre eventos históricos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

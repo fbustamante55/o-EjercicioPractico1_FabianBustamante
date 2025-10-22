@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Lista de Libros - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-book me-2 text-primary"></i>
+                    Gestión de Libros
+                </h2>
+                <p class="text-muted">Administra la colección de libros de la biblioteca</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/libros/nuevo" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nuevo Libro
+                </a>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-form">
+            <form method="get" action="/libros/buscar" class="row g-3">
+                <div class="col-md-4">
+                    <label for="titulo" class="form-label">Buscar por Título</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" 
+                           placeholder="Ingrese el título del libro" th:value="${busquedaTitulo}">
+                </div>
+                <div class="col-md-4">
+                    <label for="autor" class="form-label">Buscar por Autor</label>
+                    <input type="text" class="form-control" id="autor" name="autor" 
+                           placeholder="Ingrese el nombre del autor" th:value="${busquedaAutor}">
+                </div>
+                <div class="col-md-4">
+                    <label for="categoria" class="form-label">Buscar por Categoría</label>
+                    <input type="text" class="form-control" id="categoria" name="categoria" 
+                           placeholder="Ingrese la categoría" th:value="${busquedaCategoria}">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i>Buscar
+                    </button>
+                    <a href="/libros" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i>Limpiar
+                    </a>
+                    <a href="/libros/disponibles" class="btn btn-outline-success" th:if="${!soloDisponibles}">
+                        <i class="fas fa-check-circle me-1"></i>Solo Disponibles
+                    </a>
+                    <a href="/libros" class="btn btn-outline-secondary" th:if="${soloDisponibles}">
+                        <i class="fas fa-list me-1"></i>Todos los Libros
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Books Table -->
+        <div class="card shadow-soft">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    <span th:if="${soloDisponibles}">Libros Disponibles</span>
+                    <span th:unless="${soloDisponibles}">Todos los Libros</span>
+                    <span class="badge bg-primary ms-2" th:text="${#lists.size(libros)}">0</span>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Categoría</th>
+                                <th>ISBN</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="libro : ${libros}">
+                                <td>
+                                    <a th:href="@{'/libros/detalle/' + ${libro.id}}" 
+                                       class="book-title text-decoration-none" 
+                                       th:text="${libro.titulo}">Título del Libro</a>
+                                </td>
+                                <td th:text="${libro.autor}">Autor</td>
+                                <td>
+                                    <span class="badge bg-secondary" th:text="${libro.categoria.nombre}">Categoría</span>
+                                </td>
+                                <td th:text="${libro.isbn}">ISBN</td>
+                                <td>
+                                    <span th:if="${libro.precio != null}" 
+                                          class="book-price" 
+                                          th:text="'$' + ${#numbers.formatDecimal(libro.precio, 1, 2)}">$0.00</span>
+                                    <span th:unless="${libro.precio != null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${libro.disponible} ? 'bg-success' : 'bg-danger'"
+                                          th:text="${libro.disponible} ? 'Disponible' : 'No Disponible'">
+                                        Disponible
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{'/libros/detalle/' + ${libro.id}}" 
+                                           class="btn btn-outline-info btn-sm" 
+                                           data-bs-toggle="tooltip" 
+                                           title="Ver Detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a th:href="@{'/libros/editar/' + ${libro.id}}" 
+                                           class="btn btn-outline-warning btn-sm" 
+                                           data-bs-toggle="tooltip" 
+                                           title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form th:action="@{'/libros/toggle-disponibilidad/' + ${libro.id}}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" 
+                                                    class="btn btn-outline-secondary btn-sm btn-toggle-availability"
+                                                    th:data-available="${libro.disponible}"
+                                                    data-bs-toggle="tooltip" 
+                                                    th:title="${libro.disponible} ? 'Marcar como No Disponible' : 'Marcar como Disponible'">
+                                                <i th:class="${libro.disponible} ? 'fas fa-times' : 'fas fa-check'"></i>
+                                            </button>
+                                        </form>
+                                        <form th:action="@{'/libros/eliminar/' + ${libro.id}}" 
+                                              method="post" 
+                                              class="d-inline">
+                                            <button type="submit" 
+                                                    class="btn btn-outline-danger btn-sm btn-delete" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(libros)}">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-book fa-3x mb-3 d-block"></i>
+                                    <h5>No se encontraron libros</h5>
+                                    <p>No hay libros que coincidan con los criterios de búsqueda.</p>
+                                    <a href="/libros/nuevo" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Agregar Primer Libro
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-lightning-bolt me-2"></i>Acciones Rápidas
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="/libros/nuevo" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Nuevo Libro
+                            </a>
+                            <a href="/categorias" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-tags me-1"></i>Gestionar Categorías
+                            </a>
+                            <a href="/libros/disponibles" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-check-circle me-1"></i>Ver Disponibles
+                            </a>
+                            <button class="btn btn-outline-info btn-sm" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Imprimir Lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Gestión de Categorías - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-tags me-2 text-primary"></i>
+                    Gestión de Categorías
+                </h2>
+                <p class="text-muted">Administra las categorías de libros de la biblioteca</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/categorias/nueva" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nueva Categoría
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-form">
+            <form method="get" action="/categorias/buscar" class="row g-3">
+                <div class="col-md-8">
+                    <label for="nombre" class="form-label">Buscar Categoría</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                           placeholder="Ingrese el nombre de la categoría" th:value="${busqueda}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-1"></i>Buscar
+                        </button>
+                        <a href="/categorias" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Limpiar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="categoria : ${categorias}">
+                <div class="card shadow-soft h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title text-primary mb-0" th:text="${categoria.nombre}">Categoría</h5>
+                            <span class="badge bg-secondary" th:text="${#lists.size(categoria.libros)}">0</span>
+                        </div>
+                        
+                        <p class="card-text text-muted" th:text="${categoria.descripcion}">Descripción de la categoría</p>
+                        
+                        <div class="small text-muted mb-3">
+                            <i class="fas fa-calendar me-1"></i>
+                            Creada: <span th:text="${#dates.format(categoria.createdAt, 'dd/MM/yyyy')}">Fecha</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-book me-1"></i>
+                                <span th:text="${#lists.size(categoria.libros)} + ' libros'">0 libros</span>
+                            </small>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{'/libros?categoria=' + categoria.nombre}" 
+                                   class="btn btn-outline-primary btn-sm" 
+                                   data-bs-toggle="tooltip" 
+                                   title="Ver Libros">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{'/categorias/editar/' + categoria.id}" 
+                                   class="btn btn-outline-warning btn-sm" 
+                                   data-bs-toggle="tooltip" 
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form th:action="@{'/categorias/eliminar/' + categoria.id}" 
+                                      method="post" 
+                                      class="d-inline">
+                                    <button type="submit" 
+                                            class="btn btn-outline-danger btn-sm btn-delete" 
+                                            data-bs-toggle="tooltip" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(categorias)}" class="text-center py-5">
+            <i class="fas fa-tags fa-4x text-muted mb-4"></i>
+            <h4 class="text-muted">No hay categorías</h4>
+            <p class="text-muted mb-4">Comienza creando tu primera categoría para organizar los libros.</p>
+            <a href="/categorias/nueva" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Crear Primera Categoría
+            </a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-lightning-bolt me-2"></i>Acciones Rápidas
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="/categorias/nueva" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Nueva Categoría
+                            </a>
+                            <a href="/libros" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-book me-1"></i>Gestionar Libros
+                            </a>
+                            <button class="btn btn-outline-info btn-sm" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>Imprimir Lista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

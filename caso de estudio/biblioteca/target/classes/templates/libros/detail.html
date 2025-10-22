@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title th:text="${libro.titulo} + ' - Detalles del Libro'">Detalles del Libro - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h2>
+                    <i class="fas fa-book me-2 text-primary"></i>
+                    Detalles del Libro
+                </h2>
+                <p class="text-muted">Información completa del libro seleccionado</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/libros" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Book Details -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h4 class="mb-0 text-primary" th:text="${libro.titulo}">Título del Libro</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2">
+                                    <i class="fas fa-user me-2"></i>Autor
+                                </h6>
+                                <p class="mb-3" th:text="${libro.autor}">Nombre del Autor</p>
+
+                                <h6 class="text-muted mb-2">
+                                    <i class="fas fa-tags me-2"></i>Categoría
+                                </h6>
+                                <p class="mb-3">
+                                    <span class="badge bg-primary" th:text="${libro.categoria.nombre}">Categoría</span>
+                                </p>
+
+                                <h6 class="text-muted mb-2" th:if="${libro.isbn != null and !libro.isbn.isEmpty()}">
+                                    <i class="fas fa-barcode me-2"></i>ISBN
+                                </h6>
+                                <p class="mb-3" th:if="${libro.isbn != null and !libro.isbn.isEmpty()}" th:text="${libro.isbn}">ISBN</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-2" th:if="${libro.fechaPublicacion != null}">
+                                    <i class="fas fa-calendar me-2"></i>Fecha de Publicación
+                                </h6>
+                                <p class="mb-3" th:if="${libro.fechaPublicacion != null}" 
+                                   th:text="${#dates.format(libro.fechaPublicacion, 'dd/MM/yyyy')}">Fecha</p>
+
+                                <h6 class="text-muted mb-2" th:if="${libro.precio != null}">
+                                    <i class="fas fa-dollar-sign me-2"></i>Precio
+                                </h6>
+                                <p class="mb-3" th:if="${libro.precio != null}" 
+                                   class="h5 text-success" 
+                                   th:text="'$' + ${#numbers.formatDecimal(libro.precio, 1, 2)}">$0.00</p>
+
+                                <h6 class="text-muted mb-2">
+                                    <i class="fas fa-check-circle me-2"></i>Estado
+                                </h6>
+                                <p class="mb-3">
+                                    <span class="badge fs-6" 
+                                          th:classappend="${libro.disponible} ? 'bg-success' : 'bg-danger'"
+                                          th:text="${libro.disponible} ? 'Disponible' : 'No Disponible'">
+                                        Disponible
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div th:if="${libro.descripcion != null and !libro.descripcion.isEmpty()}" class="mt-4">
+                            <h6 class="text-muted mb-2">
+                                <i class="fas fa-align-left me-2"></i>Descripción
+                            </h6>
+                            <div class="border-start border-primary border-3 ps-3">
+                                <p th:text="${libro.descripcion}">Descripción del libro...</p>
+                            </div>
+                        </div>
+
+                        <!-- Metadata -->
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="row text-muted small">
+                                <div class="col-md-6">
+                                    <i class="fas fa-calendar-plus me-1"></i>
+                                    Creado: <span th:text="${#dates.format(libro.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <i class="fas fa-calendar-edit me-1"></i>
+                                    Modificado: <span th:text="${#dates.format(libro.updatedAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Sidebar -->
+            <div class="col-lg-4">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>Acciones
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a th:href="@{'/libros/editar/' + ${libro.id}}" 
+                               class="btn btn-warning">
+                                <i class="fas fa-edit me-2"></i>Editar Libro
+                            </a>
+                            
+                            <form th:action="@{'/libros/toggle-disponibilidad/' + ${libro.id}}" 
+                                  method="post" 
+                                  class="d-grid">
+                                <button type="submit" 
+                                        class="btn btn-outline-secondary btn-toggle-availability"
+                                        th:data-available="${libro.disponible}">
+                                    <i th:class="${libro.disponible} ? 'fas fa-times me-2' : 'fas fa-check me-2'"></i>
+                                    <span th:text="${libro.disponible} ? 'Marcar como No Disponible' : 'Marcar como Disponible'">
+                                        Cambiar Estado
+                                    </span>
+                                </button>
+                            </form>
+
+                            <div class="dropdown">
+                                <button class="btn btn-outline-info dropdown-toggle w-100" 
+                                        type="button" 
+                                        data-bs-toggle="dropdown">
+                                    <i class="fas fa-share-alt me-2"></i>Compartir
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <li>
+                                        <button class="dropdown-item btn-copy" 
+                                                th:data-copy-text="${libro.titulo + ' - ' + libro.autor}">
+                                            <i class="fas fa-copy me-2"></i>Copiar Información
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="dropdown-item btn-copy" 
+                                                th:data-copy-text="${'ISBN: ' + libro.isbn}" 
+                                                th:if="${libro.isbn != null and !libro.isbn.isEmpty()}">
+                                            <i class="fas fa-barcode me-2"></i>Copiar ISBN
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <button class="btn btn-outline-primary btn-print">
+                                <i class="fas fa-print me-2"></i>Imprimir
+                            </button>
+
+                            <hr>
+
+                            <form th:action="@{'/libros/eliminar/' + ${libro.id}}" 
+                                  method="post" 
+                                  class="d-grid">
+                                <button type="submit" 
+                                        class="btn btn-outline-danger btn-delete">
+                                    <i class="fas fa-trash me-2"></i>Eliminar Libro
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Info -->
+                <div class="card shadow-soft mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Información Rápida
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    <i class="fas fa-book fa-2x text-primary mb-2"></i>
+                                    <div class="small text-muted">Libro</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <i class="fas fa-tag fa-2x text-success mb-2"></i>
+                                <div class="small text-muted" th:text="${libro.categoria.nombre}">Categoría</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Books -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-link me-2"></i>Libros Relacionados
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-book fa-3x mb-3"></i>
+                            <h6>Otros libros de la misma categoría</h6>
+                            <p class="small">Los libros relacionados aparecerán aquí cuando haya más libros en la categoría 
+                                <strong th:text="${libro.categoria.nombre}">Categoría</strong>.</p>
+                            <a href="/libros" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-search me-1"></i>Explorar Todos los Libros
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

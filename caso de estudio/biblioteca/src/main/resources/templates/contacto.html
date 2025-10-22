@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Contacto - Biblioteca Digital</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2>
+                    <i class="fas fa-envelope me-2 text-primary"></i>
+                    Contacto
+                </h2>
+                <p class="text-muted">Estamos aquí para ayudarte. Ponte en contacto con nosotros.</p>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-soft h-100">
+                    <div class="card-body">
+                        <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                        <h5>Correo Electrónico</h5>
+                        <p class="text-muted">Envíanos un mensaje</p>
+                        <a href="mailto:info@biblioteca.com" class="btn btn-outline-primary">
+                            info@biblioteca.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-soft h-100">
+                    <div class="card-body">
+                        <i class="fas fa-phone fa-3x text-success mb-3"></i>
+                        <h5>Teléfono</h5>
+                        <p class="text-muted">Llámanos directamente</p>
+                        <a href="tel:+15551234567" class="btn btn-outline-success">
+                            +1 (555) 123-4567
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center shadow-soft h-100">
+                    <div class="card-body">
+                        <i class="fas fa-map-marker-alt fa-3x text-info mb-3"></i>
+                        <h5>Ubicación</h5>
+                        <p class="text-muted">Visítanos en persona</p>
+                        <address class="mb-0">
+                            <small>123 Calle Principal<br>Ciudad, País 12345</small>
+                        </address>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form and Info -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Envíanos un Mensaje
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form class="needs-validation" novalidate>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">Nombre Completo *</label>
+                                    <input type="text" class="form-control" id="nombre" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese su nombre completo.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Correo Electrónico *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                    <div class="invalid-feedback">
+                                        Por favor ingrese un correo electrónico válido.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="asunto" class="form-label">Asunto *</label>
+                                <input type="text" class="form-control" id="asunto" required>
+                                <div class="invalid-feedback">
+                                    Por favor ingrese el asunto del mensaje.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mensaje" class="form-label">Mensaje *</label>
+                                <textarea class="form-control" id="mensaje" rows="5" required></textarea>
+                                <div class="invalid-feedback">
+                                    Por favor escriba su mensaje.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="acepto" required>
+                                    <label class="form-check-label" for="acepto">
+                                        Acepto que mi información sea utilizada para responder a mi consulta.
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Enviar Mensaje
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="col-lg-4">
+                <!-- Hours -->
+                <div class="card shadow-soft mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Horarios de Atención
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>Lunes - Viernes:</strong><br>
+                            <small class="text-muted">9:00 AM - 6:00 PM</small>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Sábados:</strong><br>
+                            <small class="text-muted">10:00 AM - 4:00 PM</small>
+                        </div>
+                        <div class="mb-0">
+                            <strong>Domingos:</strong><br>
+                            <small class="text-muted">Cerrado</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card shadow-soft mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-link me-2"></i>Enlaces Rápidos
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="/quejas/nueva" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-comment-dots me-1"></i>Quejas y Sugerencias
+                            </a>
+                            <a href="/libros" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-book me-1"></i>Explorar Libros
+                            </a>
+                            <a href="/acerca" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-info-circle me-1"></i>Acerca de Nosotros
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="card shadow-soft">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-share-alt me-2"></i>Síguenos
+                        </h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-info btn-sm">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger btn-sm">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-question-circle text-primary me-2"></i>Preguntas Frecuentes
+                </h3>
+            </div>
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ¿Cómo puedo buscar libros en la biblioteca?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Puedes buscar libros por título, autor o categoría utilizando la función de búsqueda 
+                                en la página de libros. También puedes explorar por categorías para encontrar libros similares.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                ¿Cómo puedo enviar una queja o sugerencia?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Puedes enviar quejas, sugerencias o consultas utilizando el formulario disponible 
+                                en la sección "Quejas y Sugerencias" del menú principal.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                ¿Cuánto tiempo toma recibir una respuesta?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Nos esforzamos por responder a todos los mensajes dentro de 24-48 horas hábiles. 
+                                Si tu consulta es urgente, puedes llamarnos directamente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
